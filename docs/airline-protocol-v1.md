@@ -18,6 +18,7 @@ Create a Jet V1-inspired lending and borrowing protocol on Solana, with a local 
 - Strong code-sharing between CLI and frontend via shared packages
 - Comprehensive tests (unit + integration + e2e) with 85% unit test coverage
 - Parallel-safe integration tests (no port collisions across agents)
+- One-command workflows for common dev/test/validation flows (see below)
 
 ## On-chain program
 Model after Jet V1 program structure:
@@ -76,6 +77,23 @@ CLI must have integration tests that run against localnet.
 - Enforce >= 85% unit test coverage
 - Tests should run after every change (CI + local enforcement)
 
+## Standardized one-command workflows (yarn only)
+Any flow that agents commonly run must be a single yarn command at repo root. No multi-step instructions.
+
+Minimum required commands (names can change, behavior must match):
+- `yarn dev:all` -> start localnet + migrate + start UI + watch shared packages
+- `yarn test:all` -> unit + integration + e2e (in that order)
+- `yarn test:unit` -> unit tests with coverage gate (>=85%)
+- `yarn test:integration` -> localnet-backed tests (parallel-safe ports)
+- `yarn test:e2e` -> Playwright against local UI
+- `yarn validate` -> lint + typecheck + format + unit coverage
+- `yarn ci` -> full deterministic CI sequence (no watch, no dev servers left running)
+
+Notes:
+- Prefer root-level scripts that orchestrate workspace packages.
+- All scripts must be safe to run multiple times and must clean up localnet processes they start.
+- Any assumption that “agents will run X once” must be encoded in one of these commands.
+
 ### Parallel test strategy (no port collisions)
 Multiple agents may run tests on the same machine. Requirements:
 - Use random or isolated ports for:
@@ -88,16 +106,52 @@ Multiple agents may run tests on the same machine. Requirements:
 - Ensure tests clean up any localnet processes they start
 
 ## UI validation workflow
-Any UI-affecting change must be verified using Chrome DevTools:
+Any UI-affecting change must be verified using Playwright (headed when needed):
 - Load the UI locally
 - Check layout, typography, spacing, and interaction states
 - Confirm responsiveness (desktop + mobile breakpoints)
+- Capture screenshots for key views when changes are non-trivial
 - Document any UI regressions and fix before merging
 
 ## Documentation expectations
 - Keep `docs/airline-protocol-v1.md` as the authoritative spec
 - Add implementation notes as new docs when needed
 - Update `docs/jet-v1-reference.md` when new findings are discovered
+
+## Required agent tooling (yarn monorepo)
+Agents must have the following installed and available on PATH:
+- Node.js (LTS), Yarn v4.12.0
+- Rust toolchain (stable) + Cargo
+- Solana CLI (includes `solana-test-validator`)
+- Anchor CLI + Anchor version aligned with program toolchain
+- Playwright + browsers installed (Chromium required)
+
+Optional but recommended:
+- `jq` (for JSON inspection in scripts)
+- `rg` (ripgrep) for fast search
+
+### Playwright parallelism guidance (no MCP dependency)
+- Do not use Chrome DevTools MCP (profile lock issues); Playwright is the only supported UI automation tool.
+- Do not rely on Codex CLI MCP configuration. Tests must run via Playwright’s Node runner (`@playwright/test`) directly.
+- Each agent runs its own Playwright process with its own user data dir.
+- If headed mode is used, ensure unique profiles and avoid shared browser state.
+
+Suggested env vars to standardize (names can change, intent should match):
+- `AIRLINE_AGENT_ID` -> unique agent index
+- `AIRLINE_PROFILE_DIR` -> per-agent browser profile path
+
+## Missing or underspecified items (must be decided in docs)
+- Monorepo layout and package naming conventions (apps, packages, programs)
+- Port allocation strategy and environment variables (RPC/WS/UI/test)
+- Shared IDL metadata schema and storage path for UI + CLI
+- Seed data and determinism guarantees for localnet/migrations
+- Coverage tooling + enforcement mechanism (nyc/istanbul/coverage thresholds)
+- CI pipeline shape (commands, caching, artifacts, Playwright browser install)
+- Linting/formatting rules and pre-commit policy
+- Wallet adapter strategy for the UI (including dev wallets and test wallets)
+- Error handling + telemetry policy (Rollbar/Sentry equivalent or none)
+- CLI UX standard (command naming, flags, output format, JSON support)
+- Test fixture strategy (reuse vs. per-test bootstrap; cleanup guarantees)
 
 ## Acceptance criteria
 - Localnet can be started with one command, fully configured with reserves and IDL metadata
