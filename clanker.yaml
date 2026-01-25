@@ -10,8 +10,8 @@ slaves: default
 # default: 3. Queued task backlog target.
 backlog: default
 
-# default: true. Start in /resume state.
-startImmediately: false
+# default: false. Start in /resume state.
+startImmediately: default
 
 # default: clanker-<repo>. Tmux session filter override.
 tmuxFilter: default
