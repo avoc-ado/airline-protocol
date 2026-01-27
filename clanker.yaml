@@ -13,7 +13,7 @@ backlog: default
 # default: false. Start in /resume state.
 startImmediately: default
 
-# default: clanker-<repo>. Tmux session filter override.
+# default: clanker-<repo>. Tmux session name (tmux) or session prefix (iTerm2) override.
 tmuxFilter: default
 
 # default: codex --no-alt-screen --sandbox workspace-write. Command used to launch Codex CLI.
