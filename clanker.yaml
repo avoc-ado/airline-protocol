@@ -7,7 +7,7 @@ judges: default
 # default: 3. Number of Slave terminals.
 slaves: default
 
-# default: 3. Queued task backlog target.
+# default: 1. Queued task backlog target.
 backlog: default
 
 # default: false. Start in /resume state.
