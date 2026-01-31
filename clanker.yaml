@@ -10,6 +10,12 @@ slaves: default
 # default: 1. Queued task backlog target.
 backlog: default
 
+# default: true. Enforce ownerDirs/ownerFiles lock conflicts.
+lockConflictsEnabled: default
+
+# default: false. Pause planner prompting when queued tasks are lock-blocked.
+lockConflictsBlockPlanner: default
+
 # default: false. Start in /resume state.
 startImmediately: default
 
