@@ -1,0 +1,12 @@
+AGENTS.md
+docs
+.yarn
+node_modules
+.next
+coverage
+dist
+target
+vendor
+apps/web/public
+apps/web/src/app.disabled
+*.svg

@@ -1,0 +1,32 @@
+{
+  "name": "airline-protocol",
+  "private": true,
+  "packageManager": "yarn@4.12.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "programs/*"
+  ],
+  "scripts": {
+    "dev:all": "node scripts/dev-all.mjs",
+    "format": "node scripts/format.mjs",
+    "lint": "node scripts/lint.mjs",
+    "typecheck": "node scripts/typecheck.mjs",
+    "test:all": "node scripts/test-all.mjs",
+    "test:unit": "node scripts/test-unit.mjs",
+    "test:integration": "node scripts/test-integration.mjs",
+    "test:e2e": "node scripts/test-e2e.mjs",
+    "test:it:real": "node scripts/test-it-real.mjs",
+    "test:it:real:debug": "node scripts/test-it-real-debug.mjs",
+    "validate": "node scripts/validate.mjs",
+    "verify": "node scripts/validate.mjs",
+    "ci": "node scripts/ci.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.55.0",
+    "@vitest/coverage-v8": "3.2.4",
+    "prettier": "3.6.2",
+    "typescript": "5.5.4",
+    "vitest": "3.2.4"
+  }
+}
