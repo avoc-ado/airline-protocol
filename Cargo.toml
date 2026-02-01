@@ -1,6 +1,7 @@
 [workspace]
 members = [
   "programs/airline",
-  "programs/openbook-v2-mock"
+  "programs/openbook-v2-mock",
+  "programs/pyth-receiver-mock"
 ]
 resolver = "2"

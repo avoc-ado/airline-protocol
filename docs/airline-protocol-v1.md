@@ -39,6 +39,7 @@ Model after Jet V1 program structure:
 ### Oracle + DEX fixtures (localnet)
 - OpenBook v2 program ID: `opnb2LAfJYbRMAHHvqjCwQxanZn7ReEHp1k81EohpZb`
 - Pyth Solana receiver (push) program ID: `rec5EKMGg6MxZYaMdyBfgwp4d5rB9T1VQH5pJv5LtFJ`
+- Localnet uses a mock Pyth receiver program at the receiver ID to allow tests to overwrite feed data.
 - Pyth push feed accounts to preload (mainnet/devnet/localnet):
   - SOL/USD: account `7UVimffxr9ow1uXYxsr4LHAcV58mLzhmwaeKvJ1pjLiE`, feed ID `ef0d8b6fda2ceba41da15d4095d1da392a0d2f8ed0c6c7bc0f4cfac8c280b56d`
   - MSOL/USD: account `5CKzb9j4ChgLUt8Gfm5CNGLN6khXKiqMbnGAW4cgXgxK`, feed ID `c2289a6a43d2ce91c6f55caec370f4acc38a2ed477f58813334c6d03749ff2a4`

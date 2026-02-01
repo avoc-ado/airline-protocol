@@ -2,7 +2,10 @@ import { describe, expect, it } from "vitest";
 import {
   OPENBOOK_V2_PROGRAM_ID,
   PYTH_PUSH_FEEDS,
-  PYTH_PUSH_PROGRAM_ID
+  PYTH_PUSH_PROGRAM_ID,
+  readMockPythPrice,
+  waitForMockPythPrice,
+  writeMockPythPrice
 } from "@airline-protocol/test-utils";
 
 const hasLocalnetEnv =
@@ -74,5 +77,24 @@ describe("cli localnet", () => {
         expect(feedAccount?.executable).toBe(false);
       })
     );
+
+    const feed = PYTH_PUSH_FEEDS[0];
+    const beforePrice = await readMockPythPrice({ rpcUrl, account: feed.account });
+    const nextPrice = beforePrice + BigInt(1000);
+
+    await writeMockPythPrice({
+      rpcUrl,
+      account: feed.account,
+      price: nextPrice,
+      programId: pythPushProgramId
+    });
+
+    const afterPrice = await waitForMockPythPrice({
+      rpcUrl,
+      account: feed.account,
+      expected: nextPrice,
+      timeoutMs: 5_000
+    });
+    expect(afterPrice).toBe(nextPrice);
   });
 });

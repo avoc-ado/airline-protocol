@@ -4,7 +4,10 @@ import { describe, expect, it } from "vitest";
 import {
   OPENBOOK_V2_PROGRAM_ID,
   PYTH_PUSH_FEEDS,
-  PYTH_PUSH_PROGRAM_ID
+  PYTH_PUSH_PROGRAM_ID,
+  readMockPythPrice,
+  waitForMockPythPrice,
+  writeMockPythPrice
 } from "@airline-protocol/test-utils";
 import { loadIdlBundle, makeAirlineClient, makeRpcUrls } from "../../src/index";
 
@@ -26,10 +29,12 @@ const parseNumber = ({ value, fallback }: { value: string | undefined; fallback:
 
 const requestProgramAccount = async ({
   rpcUrl,
-  programId
+  programId,
+  commitment = "confirmed"
 }: {
   rpcUrl: string;
   programId: string;
+  commitment?: "processed" | "confirmed" | "finalized";
 }) => {
   const response = await fetch(rpcUrl, {
     method: "POST",
@@ -38,7 +43,7 @@ const requestProgramAccount = async ({
       jsonrpc: "2.0",
       id: 1,
       method: "getAccountInfo",
-      params: [programId, { encoding: "base64" }]
+      params: [programId, { encoding: "base64", commitment }]
     })
   });
 
@@ -125,6 +130,24 @@ describe("airline client localnet", () => {
             expect(feedAccount?.executable).toBe(false);
           })
         );
+
+        const feed = PYTH_PUSH_FEEDS[0];
+        const beforePrice = await readMockPythPrice({ rpcUrl, account: feed.account });
+        const nextPrice = beforePrice + BigInt(1000);
+
+        await writeMockPythPrice({
+          rpcUrl,
+          account: feed.account,
+          price: nextPrice
+        });
+
+        const afterPrice = await waitForMockPythPrice({
+          rpcUrl,
+          account: feed.account,
+          expected: nextPrice,
+          timeoutMs: 5_000
+        });
+        expect(afterPrice).toBe(nextPrice);
       }
     });
   });

@@ -9,6 +9,7 @@ skip-lint = false
 [programs.localnet]
 airline = "C4AjCLzqwsL5cXoqiiazP8e7xo2ppNL3v2N9ju9wG4nK"
 openbook_v2_mock = "opnb2LAfJYbRMAHHvqjCwQxanZn7ReEHp1k81EohpZb"
+pyth_receiver_mock = "rec5EKMGg6MxZYaMdyBfgwp4d5rB9T1VQH5pJv5LtFJ"
 
 [registry]
 url = "https://api.apr.dev"

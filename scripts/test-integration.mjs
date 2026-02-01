@@ -24,10 +24,15 @@ const openbookProgram = await ensureProgramArtifact({
   programName: "openbook_v2_mock",
   manifestPath: "programs/openbook-v2-mock/Cargo.toml"
 });
+const pythReceiverProgram = await ensureProgramArtifact({
+  programId: pythPushProgramId,
+  programName: "pyth_receiver_mock",
+  manifestPath: "programs/pyth-receiver-mock/Cargo.toml"
+});
 const localnet = await startLocalnet({
   rpcPort: ports.rpcPort,
   wsPort: ports.wsPort,
-  programs: [program, openbookProgram],
+  programs: [program, openbookProgram, pythReceiverProgram],
   accountDirs: [pythAccountDir]
 });
 const env = {
