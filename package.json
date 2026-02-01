@@ -17,7 +17,6 @@
     "test:integration": "node scripts/test-integration.mjs",
     "test:e2e": "node scripts/test-e2e.mjs",
     "test:it:real": "node scripts/test-it-real.mjs",
-    "test:it:real:debug": "node scripts/test-it-real-debug.mjs",
     "validate": "node scripts/validate.mjs",
     "verify": "node scripts/validate.mjs",
     "ci": "node scripts/ci.mjs"
