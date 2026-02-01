@@ -32,6 +32,11 @@ try {
   await runCommand({ command: "cargo test -p airline --test localnet -- --ignored", env });
   await runCommand({
     command:
+      "corepack yarn vitest run --config vitest.config.ts packages/cli/tests/localnet/localnet.test.ts",
+    env
+  });
+  await runCommand({
+    command:
       "corepack yarn vitest run --config vitest.config.ts packages/client/tests/localnet/localnet.test.ts",
     env
   });
