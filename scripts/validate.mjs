@@ -5,6 +5,7 @@ await runCommands({
     "corepack yarn format",
     "corepack yarn lint",
     "corepack yarn typecheck",
-    "corepack yarn test:unit"
+    "corepack yarn test:unit",
+    "cargo test -p airline"
   ]
 });
