@@ -1,5 +1,5 @@
 import { spawn, spawnSync } from "node:child_process";
-import { mkdir, rm } from "node:fs/promises";
+import { mkdir, readFile, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 
@@ -28,6 +28,27 @@ const supportsWsPort = ({ validatorBin }) => {
   const result = spawnSync(validatorBin, ["--help"], { encoding: "utf8" });
   const output = `${result.stdout ?? ""}${result.stderr ?? ""}`;
   return output.includes("--ws-port");
+};
+
+const waitForLogReady = async ({ logPath, timeoutMs, pollMs, isProcessAlive }) => {
+  const startedAt = Date.now();
+
+  while (Date.now() - startedAt < timeoutMs) {
+    if (isProcessAlive && !isProcessAlive()) {
+      throw new Error("solana-test-validator exited before logs stabilized");
+    }
+
+    try {
+      const logs = await readFile(logPath, "utf8");
+      if (logs.includes("Confirmed Slot: 1")) {
+        return;
+      }
+    } catch {
+      // Keep polling until the log exists.
+    }
+
+    await sleep({ ms: pollMs });
+  }
 };
 
 const waitForRpc = async ({ rpcUrl, timeoutMs, pollMs, isProcessAlive }) => {
@@ -88,6 +109,14 @@ const startLocalnet = async ({ rpcPort, wsPort, ledgerDir, keepLedger } = {}) =>
 
   const rpcUrl = `http://127.0.0.1:${rpcPort}`;
   const wsUrl = `ws://127.0.0.1:${resolvedWsPort}`;
+  const logPath = path.join(resolvedLedgerDir, "validator.log");
+
+  await waitForLogReady({
+    logPath,
+    timeoutMs: 30_000,
+    pollMs: 500,
+    isProcessAlive: () => exitCode === null
+  });
 
   await waitForRpc({
     rpcUrl,
