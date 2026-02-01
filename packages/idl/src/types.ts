@@ -5,12 +5,23 @@ export interface AirlineReserveMetadata {
   oracleAddress: string;
 }
 
+export interface AirlinePythFeedMetadata {
+  label: string;
+  account: string;
+  feedId: string;
+}
+
 export interface AirlineIdlMetadata {
+  version: string;
   cluster: string;
   generatedAt: string;
-  marketAddress: string;
   programId: string;
   reserves: AirlineReserveMetadata[];
+  marketAddress?: string;
+  openbookProgramId?: string;
+  pythPushProgramId?: string;
+  pythFeeds?: AirlinePythFeedMetadata[];
+  seedStatus?: "seeded" | "stub";
 }
 
 export interface AirlineIdlBundle {

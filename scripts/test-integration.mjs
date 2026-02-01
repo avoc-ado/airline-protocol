@@ -48,7 +48,7 @@ const env = {
 };
 
 try {
-  await runCommand({ command: "node scripts/migrate/run.mjs", env });
+  await runCommand({ command: "node scripts/seed/run.mjs", env });
   await runCommand({ command: "cargo test -p airline --test localnet -- --ignored", env });
   await runCommand({
     command:

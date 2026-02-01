@@ -35,6 +35,7 @@ describe("airline client", () => {
     const idl = {
       idl: { name: "airline" },
       metadata: {
+        version: "v1",
         cluster: "localnet",
         generatedAt: "2026-01-31",
         marketAddress: "market",
@@ -60,6 +61,7 @@ describe("airline client", () => {
     const payload = {
       idl: { name: "airline" },
       metadata: {
+        version: "v1",
         cluster: "localnet",
         generatedAt: "2026-01-31",
         marketAddress: "market",

@@ -4,11 +4,11 @@ import { runCommand } from "./lib/run.mjs";
 
 const threshold = 85;
 
-const resolveCoveragePath = () =>
-  path.resolve(process.cwd(), "packages", "coverage", "coverage-summary.json");
+const resolveCoveragePath = ({ dir }) =>
+  path.resolve(process.cwd(), dir, "coverage", "coverage-summary.json");
 
-const assertCoverage = async () => {
-  const coveragePath = resolveCoveragePath();
+const assertCoverage = async ({ dir, label }) => {
+  const coveragePath = resolveCoveragePath({ dir });
   const raw = await readFile(coveragePath, "utf-8");
   const summary = JSON.parse(raw);
   const total = summary.total;
@@ -24,7 +24,7 @@ const assertCoverage = async () => {
 
   const detail = failures.map(({ metric, value }) => `${metric}=${value}`).join(", ");
 
-  throw new Error(`Coverage below ${threshold}%: ${detail}`);
+  throw new Error(`[${label}] coverage below ${threshold}%: ${detail}`);
 };
 
 await runCommand({
@@ -32,8 +32,11 @@ await runCommand({
     "corepack yarn vitest run --coverage --coverage.reporter=text --coverage.reporter=json-summary"
 });
 
-await assertCoverage();
+await assertCoverage({ dir: "packages", label: "packages" });
 
 await runCommand({
-  command: "corepack yarn vitest run --config apps/web/vitest.config.ts apps/web/tests/unit"
+  command:
+    "corepack yarn vitest run --config apps/web/vitest.config.ts --coverage --coverage.reporter=text --coverage.reporter=json-summary apps/web/tests/unit"
 });
+
+await assertCoverage({ dir: "apps/web", label: "apps/web" });
