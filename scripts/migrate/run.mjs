@@ -5,7 +5,7 @@ const rpcPort = process.env.AIRLINE_RPC_PORT ?? "8899";
 const rpcUrl = process.env.AIRLINE_RPC_URL ?? `http://127.0.0.1:${rpcPort}`;
 const outputPath =
   process.env.AIRLINE_IDL_PATH ?? path.join("apps", "web", "public", "idl", "airline.json");
-const programId = process.env.AIRLINE_PROGRAM_ID ?? "Air1nE1111111111111111111111111111111111";
+const programId = process.env.AIRLINE_PROGRAM_ID ?? "C4AjCLzqwsL5cXoqiiazP8e7xo2ppNL3v2N9ju9wG4nK";
 
 const assertRpcReady = async () => {
   const response = await fetch(rpcUrl, {

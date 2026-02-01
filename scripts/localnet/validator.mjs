@@ -77,7 +77,14 @@ const waitForRpc = async ({ rpcUrl, timeoutMs, pollMs, isProcessAlive }) => {
 const makeLedgerDir = ({ agentId, baseDir }) =>
   path.join(baseDir, `agent-${agentId}`, `${Date.now()}`);
 
-const startLocalnet = async ({ rpcPort, wsPort, ledgerDir, keepLedger } = {}) => {
+const startLocalnet = async ({
+  rpcPort,
+  wsPort,
+  ledgerDir,
+  keepLedger,
+  programs = [],
+  accounts = []
+} = {}) => {
   const agentId = process.env.AIRLINE_AGENT_ID ?? `${process.pid}`;
   const baseDir =
     process.env.AIRLINE_LEDGER_BASE_DIR ?? path.join(os.tmpdir(), "airline-protocol", "localnet");
@@ -91,6 +98,14 @@ const startLocalnet = async ({ rpcPort, wsPort, ledgerDir, keepLedger } = {}) =>
   await mkdir(resolvedLedgerDir, { recursive: true });
 
   const args = ["--ledger", resolvedLedgerDir, "--rpc-port", String(rpcPort), "--reset"];
+
+  programs.forEach(({ programId, deployPath }) => {
+    args.push("--bpf-program", programId, deployPath);
+  });
+
+  accounts.forEach(({ address, deployPath }) => {
+    args.push("--account", address, deployPath);
+  });
 
   if (hasWsPortFlag) {
     args.push("--ws-port", String(resolvedWsPort));

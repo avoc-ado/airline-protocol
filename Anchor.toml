@@ -7,7 +7,7 @@ seeds = false
 skip-lint = false
 
 [programs.localnet]
-airline = "11111111111111111111111111111111"
+airline = "C4AjCLzqwsL5cXoqiiazP8e7xo2ppNL3v2N9ju9wG4nK"
 
 [registry]
 url = "https://api.apr.dev"
