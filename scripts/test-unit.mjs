@@ -33,3 +33,7 @@ await runCommand({
 });
 
 await assertCoverage();
+
+await runCommand({
+  command: "corepack yarn vitest run --config apps/web/vitest.config.ts apps/web/tests/unit"
+});

@@ -1,5 +1,5 @@
 import { spawn, spawnSync } from "node:child_process";
-import { mkdir, readFile, rm } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 
@@ -74,8 +74,24 @@ const waitForRpc = async ({ rpcUrl, timeoutMs, pollMs, isProcessAlive }) => {
   throw new Error(`Timed out waiting for validator at ${rpcUrl}`);
 };
 
-const makeLedgerDir = ({ agentId, baseDir }) =>
-  path.join(baseDir, `agent-${agentId}`, `${Date.now()}`);
+const resolveTmpBaseDir = () => {
+  const envTmpDir = process.env.AIRLINE_TMP_DIR;
+  const defaultTmpDir = os.tmpdir();
+  const candidateDir = envTmpDir ?? defaultTmpDir;
+
+  if (candidateDir.includes("/var/folders/")) {
+    return "/tmp";
+  }
+
+  return candidateDir;
+};
+
+const makeLedgerDir = async ({ agentId, baseDir }) => {
+  const resolvedBaseDir = baseDir ?? resolveTmpBaseDir();
+
+  await mkdir(resolvedBaseDir, { recursive: true });
+  return mkdtemp(path.join(resolvedBaseDir, `airline-ledger-${agentId}-`));
+};
 
 const startLocalnet = async ({
   rpcPort,
@@ -86,10 +102,9 @@ const startLocalnet = async ({
   accounts = []
 } = {}) => {
   const agentId = process.env.AIRLINE_AGENT_ID ?? `${process.pid}`;
-  const baseDir =
-    process.env.AIRLINE_LEDGER_BASE_DIR ?? path.join(os.tmpdir(), "airline-protocol", "localnet");
+  const baseDir = process.env.AIRLINE_LEDGER_BASE_DIR;
   const resolvedLedgerDir =
-    ledgerDir ?? process.env.AIRLINE_LEDGER_DIR ?? makeLedgerDir({ agentId, baseDir });
+    ledgerDir ?? process.env.AIRLINE_LEDGER_DIR ?? (await makeLedgerDir({ agentId, baseDir }));
   const resolvedKeepLedger = keepLedger ?? (process.env.AIRLINE_KEEP_LEDGER ?? "false") === "true";
   const validatorBin = process.env.AIRLINE_TEST_VALIDATOR_BIN ?? "solana-test-validator";
   const hasWsPortFlag = supportsWsPort({ validatorBin });
