@@ -8,6 +8,7 @@ skip-lint = false
 
 [programs.localnet]
 airline = "C4AjCLzqwsL5cXoqiiazP8e7xo2ppNL3v2N9ju9wG4nK"
+openbook_v2_mock = "opnb2LAfJYbRMAHHvqjCwQxanZn7ReEHp1k81EohpZb"
 
 [registry]
 url = "https://api.apr.dev"

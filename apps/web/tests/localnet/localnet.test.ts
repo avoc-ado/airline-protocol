@@ -1,6 +1,11 @@
 import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
 import { describe, expect, it } from "vitest";
+import {
+  OPENBOOK_V2_PROGRAM_ID,
+  PYTH_PUSH_FEEDS,
+  PYTH_PUSH_PROGRAM_ID
+} from "@airline-protocol/test-utils";
 import { makeLocalnetClient } from "../../src/lib/airline-client";
 
 const parseNumber = ({ value, fallback }: { value: string | undefined; fallback: number }) => {
@@ -92,6 +97,8 @@ describe("localnet web client", () => {
     const rpcUrl = process.env.AIRLINE_RPC_URL ?? `http://127.0.0.1:${rpcPort}`;
     const programId =
       process.env.AIRLINE_PROGRAM_ID ?? "C4AjCLzqwsL5cXoqiiazP8e7xo2ppNL3v2N9ju9wG4nK";
+    const openbookProgramId = process.env.AIRLINE_OPENBOOK_V2_PROGRAM_ID ?? OPENBOOK_V2_PROGRAM_ID;
+    const pythPushProgramId = process.env.AIRLINE_PYTH_PUSH_PROGRAM_ID ?? PYTH_PUSH_PROGRAM_ID;
     const idlPath = process.env.AIRLINE_IDL_PATH ?? "apps/web/public/idl/airline.json";
 
     await withIdlServer({
@@ -113,6 +120,22 @@ describe("localnet web client", () => {
         const programAccount = await requestProgramAccount({ rpcUrl, programId });
         expect(programAccount).not.toBeNull();
         expect(programAccount?.executable).toBe(true);
+
+        const openbookAccount = await requestProgramAccount({
+          rpcUrl,
+          programId: openbookProgramId
+        });
+        expect(openbookAccount).not.toBeNull();
+        expect(openbookAccount?.executable).toBe(true);
+
+        await Promise.all(
+          PYTH_PUSH_FEEDS.map(async (feed) => {
+            const feedAccount = await requestProgramAccount({ rpcUrl, programId: feed.account });
+            expect(feedAccount).not.toBeNull();
+            expect(feedAccount?.owner).toBe(pythPushProgramId);
+            expect(feedAccount?.executable).toBe(false);
+          })
+        );
       }
     });
   });

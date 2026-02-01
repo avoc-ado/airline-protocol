@@ -11,7 +11,7 @@ Create a Jet V1-inspired lending and borrowing protocol on Solana, with a local 
 
 ## Core architecture (must-have)
 - On-chain program written with Anchor (Rust)
-- Local test validator with Serum DEX preloaded (genesis) and Pyth price oracles
+- Local test validator with OpenBook v2 preloaded (genesis) and Pyth push price oracles
 - Migration script that initializes market, reserves, and writes IDL metadata used by the UI
 - Next.js frontend that talks directly to RPC (no backend) and loads IDL metadata in-browser
 - Typescript CLI covering all protocol actions (deposit, borrow, repay, liquidate, etc.)
@@ -24,17 +24,25 @@ Create a Jet V1-inspired lending and borrowing protocol on Solana, with a local 
 Model after Jet V1 program structure:
 - Instructions: init market/reserve, update reserve config, init user accounts, deposit/withdraw, deposit/withdraw collateral, borrow/repay, liquidate, refresh reserve
 - State accounts: market, reserve, obligation, cache
-- Uses Pyth price data and Serum DEX (for liquidation routes)
+- Uses Pyth push price data and OpenBook v2 (for liquidation routes)
 
 ## Localnet and migration
-- Start a local validator with Serum DEX as a preloaded program (genesis entry)
+- Start a local validator with OpenBook v2 as a preloaded program (genesis entry)
 - Build + deploy the program via Anchor
 - Migration script should:
   - Create test mints (at least USDC, SOL, BTC, ETH equivalents)
-  - Create Pyth price + product accounts and set deterministic prices
-  - Create Serum markets per asset vs. the quote token
+  - Create Pyth push feed accounts and set deterministic prices
+  - Create OpenBook v2 markets per asset vs. the quote token
   - Initialize the market and reserves
   - Write IDL metadata to a web-consumable JSON file (for the UI)
+
+### Oracle + DEX fixtures (localnet)
+- OpenBook v2 program ID: `opnb2LAfJYbRMAHHvqjCwQxanZn7ReEHp1k81EohpZb`
+- Pyth Solana receiver (push) program ID: `rec5EKMGg6MxZYaMdyBfgwp4d5rB9T1VQH5pJv5LtFJ`
+- Pyth push feed accounts to preload (mainnet/devnet/localnet):
+  - SOL/USD: account `7UVimffxr9ow1uXYxsr4LHAcV58mLzhmwaeKvJ1pjLiE`, feed ID `ef0d8b6fda2ceba41da15d4095d1da392a0d2f8ed0c6c7bc0f4cfac8c280b56d`
+  - MSOL/USD: account `5CKzb9j4ChgLUt8Gfm5CNGLN6khXKiqMbnGAW4cgXgxK`, feed ID `c2289a6a43d2ce91c6f55caec370f4acc38a2ed477f58813334c6d03749ff2a4`
+  - USDC/USD: account `Dpw1EAVrSB1ibxiDQyTAW6Zip3J4Btk2x4SgApQCeFbX`, feed ID `eaa020c61cc479712813461ce153894a96a6c00b21ed0cfc2798d1f9a9e9c94a`
 
 ## Shared Typescript packages
 Create a shared package (or packages) used by both CLI and frontend:

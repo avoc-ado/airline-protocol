@@ -1,4 +1,9 @@
 import { describe, expect, it } from "vitest";
+import {
+  OPENBOOK_V2_PROGRAM_ID,
+  PYTH_PUSH_FEEDS,
+  PYTH_PUSH_PROGRAM_ID
+} from "@airline-protocol/test-utils";
 
 const hasLocalnetEnv =
   Boolean(process.env.AIRLINE_RPC_URL) || Boolean(process.env.AIRLINE_RPC_PORT);
@@ -50,9 +55,24 @@ describe("cli localnet", () => {
     const rpcUrl = process.env.AIRLINE_RPC_URL ?? `http://127.0.0.1:${rpcPort}`;
     const programId =
       process.env.AIRLINE_PROGRAM_ID ?? "C4AjCLzqwsL5cXoqiiazP8e7xo2ppNL3v2N9ju9wG4nK";
+    const openbookProgramId = process.env.AIRLINE_OPENBOOK_V2_PROGRAM_ID ?? OPENBOOK_V2_PROGRAM_ID;
+    const pythPushProgramId = process.env.AIRLINE_PYTH_PUSH_PROGRAM_ID ?? PYTH_PUSH_PROGRAM_ID;
 
     const programAccount = await requestProgramAccount({ rpcUrl, programId });
     expect(programAccount).not.toBeNull();
     expect(programAccount?.executable).toBe(true);
+
+    const openbookAccount = await requestProgramAccount({ rpcUrl, programId: openbookProgramId });
+    expect(openbookAccount).not.toBeNull();
+    expect(openbookAccount?.executable).toBe(true);
+
+    await Promise.all(
+      PYTH_PUSH_FEEDS.map(async (feed) => {
+        const feedAccount = await requestProgramAccount({ rpcUrl, programId: feed.account });
+        expect(feedAccount).not.toBeNull();
+        expect(feedAccount?.owner).toBe(pythPushProgramId);
+        expect(feedAccount?.executable).toBe(false);
+      })
+    );
   });
 });

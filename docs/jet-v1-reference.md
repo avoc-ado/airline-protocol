@@ -29,6 +29,7 @@ Key state accounts (see `programs/jet/src/state`):
 - Cache
 
 Program integrates with Pyth price oracles and Serum DEX (for liquidation routes).
+Airline Protocol replaces Serum with OpenBook v2 and uses Pyth push feeds instead of legacy Pyth price/product accounts.
 
 ## Localnet / validator setup
 Anchor config (`Anchor.toml`) uses localnet and includes Serum DEX as a genesis program:

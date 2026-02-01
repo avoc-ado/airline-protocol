@@ -99,7 +99,8 @@ const startLocalnet = async ({
   ledgerDir,
   keepLedger,
   programs = [],
-  accounts = []
+  accounts = [],
+  accountDirs = []
 } = {}) => {
   const agentId = process.env.AIRLINE_AGENT_ID ?? `${process.pid}`;
   const baseDir = process.env.AIRLINE_LEDGER_BASE_DIR;
@@ -120,6 +121,10 @@ const startLocalnet = async ({
 
   accounts.forEach(({ address, deployPath }) => {
     args.push("--account", address, deployPath);
+  });
+
+  accountDirs.forEach((accountDir) => {
+    args.push("--account-dir", accountDir);
   });
 
   if (hasWsPortFlag) {

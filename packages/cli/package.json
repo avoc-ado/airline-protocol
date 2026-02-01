@@ -10,5 +10,8 @@
   "dependencies": {
     "@airline-protocol/client": "workspace:*",
     "@airline-protocol/idl": "workspace:*"
+  },
+  "devDependencies": {
+    "@airline-protocol/test-utils": "workspace:*"
   }
 }

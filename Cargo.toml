@@ -1,5 +1,6 @@
 [workspace]
 members = [
-  "programs/airline"
+  "programs/airline",
+  "programs/openbook-v2-mock"
 ]
 resolver = "2"

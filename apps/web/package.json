@@ -17,6 +17,7 @@
     "react-dom": "19.2.3"
   },
   "devDependencies": {
+    "@airline-protocol/test-utils": "workspace:*",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
